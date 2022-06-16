@@ -18,12 +18,12 @@ DATA_URL = ('ATMweb.xlsx')
 
 @st.cache
 def load_data():
-    read_data = pd.read_csv(DATA_URL)
-    return data
+    read_data = pd.read_excel(DATA_URL, parse_dates=True, sheet_name = 'AllocationPlan')
+    return read_data
 data = load_data()
 
 #################################################################################################################################################
-data = pd.read_excel(latest_file, parse_dates=True, sheet_name = 'AllocationPlan')
+
 data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',"Confirmed_TEU",'Pipeline','%Pipeline']]
 data["Year"] = data["Year"].fillna(0)
 data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].fillna(0)
