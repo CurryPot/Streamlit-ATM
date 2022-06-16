@@ -14,7 +14,7 @@ today = dt.date.today()
 
 CurrentWeek = int(today.isocalendar().week)
 
-DATA_URL = (r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.xlsx")
+DATA_URL = (r"ATMweb.xlsx")
 
 data = pd.read_excel(DATA_URL, parse_dates=True, sheet_name = 'AllocationPlan')
 data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',"Confirmed_TEU",'Pipeline','%Pipeline']]
