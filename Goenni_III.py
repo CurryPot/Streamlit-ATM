@@ -19,7 +19,7 @@ CurrentWeek = int(today.isocalendar().week)
 DATA_URL = (r"ATMweb.txt")
 
 #data = pd.read_excel(DATA_URL, parse_dates=True, sheet_name = 'AllocationPlan', engine='openpyxl')
-data = pd.read_table(r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt", sep='\t')
+data = pd.read_table(DATA_URL, sep='\t')
 
 data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',"Confirmed_TEU",'Pipeline','%Pipeline']]
 
