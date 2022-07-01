@@ -330,10 +330,25 @@ else:
 			)
 
 
+			per_of_totalIII = px.bar(
+				finalselection,
+				x = "%Filled",
+				y = "%Type", 
+				orientation="h",
+				title="<b>%Allocation Vs. %Actual",
+				color='%Type',
+				text=[f'{i}%' for i in finalselection['%Filled']]
+			) 
 
-			left_column = st.columns(1)
+			per_of_totalIII.layout.xaxis.ticksuffix=".0%" 
+
+
+			left_column, right_column = st.columns(2)
 			with left_column:
 				st.plotly_chart(Allocation_TEU)
+
+			with right_column:
+				st.plotly_chart(per_of_totalIII)
 				
 
 			total_all_teu = int(just_a_shot['Allocation'].sum())
@@ -811,5 +826,3 @@ else:
 	st.markdown("---")
 	
 	st.write(finalselectionSly)
-
-
