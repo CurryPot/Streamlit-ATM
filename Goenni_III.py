@@ -315,14 +315,9 @@ else:
 				color='Type',
 				text="TEU"
 			)
+			
+			st.plotly_chart(Allocation_TEU)
 
-
-
-
-			left_column= st.columns(1)
-			with left_column:
-				st.plotly_chart(Allocation_TEU)
-				
 
 			total_all_teu = int(just_a_shot['Allocation'].sum())
 			used_teu = int(just_a_shot['Pipeline'].sum())
