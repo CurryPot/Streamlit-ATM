@@ -213,12 +213,12 @@ else:
 				column='Forwarder:N',
 				tooltip='TEU:Q',
 				text='TEU:Q'
+			).configure_axis(
+			labelFontSize=20,
+			titleFontSize=20
 			)
 			
 			st.altair_chart(bar_x)
-		
-			
-		
 				
 			finalselection = finalselection.sort_values(by=['Forwarder','Type'],ascending=True)
 			
