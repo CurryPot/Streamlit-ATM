@@ -214,24 +214,11 @@ else:
 				tooltip='TEU:Q',
 				text='TEU:Q'
 			)
+			
+			st.altair_chart(bar_x)
 		
 			
-			bar_y = alt.Chart(finalselection, height=500, width={"step": 120}).mark_bar().encode(
-				x='Type:O',
-				y= alt.Y(('%Filled:Q'), axis=alt.Axis(format='%')),
-				color='%Type:N',
-				column='Forwarder:N',
-				tooltip='TEU:Q',
-				text='%Filled:Q'
-			)
-
-			left_column, right_column = st.columns(2)
-			with left_column:
-				st.altair_chart(bar_x)
-
-			with right_column:
-				st.altair_chart(bar_y)
-				
+		
 				
 			finalselection = finalselection.sort_values(by=['Forwarder','Type'],ascending=True)
 			
