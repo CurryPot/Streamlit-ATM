@@ -15,8 +15,8 @@ today = dt.date.today()
 
 CurrentWeek = int(today.isocalendar().week)
 
-#DATA_URL = (r"ATMweb.xlsx")
-DATA_URL = r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt"
+DATA_URL = (r"ATMweb.xlsx")
+#DATA_URL = r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt"
 #data = pd.read_excel(DATA_URL, parse_dates=True, sheet_name = 'AllocationPlan', engine='openpyxl')
 data = pd.read_csv(DATA_URL, delimiter="\t")
 
