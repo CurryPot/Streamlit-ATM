@@ -16,30 +16,55 @@ today = dt.date.today()
 CurrentWeek = int(today.isocalendar().week)
 
 #DATA_URL = (r"ATMweb.xlsx")
-DATA_URL = (r"ATMweb.txt")
-
+DATA_URL = r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt"
 #data = pd.read_excel(DATA_URL, parse_dates=True, sheet_name = 'AllocationPlan', engine='openpyxl')
-data = pd.read_table(DATA_URL, sep='\t')
+data = pd.read_csv(DATA_URL, delimiter="\t")
 
-data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',"Confirmed_TEU",'Pipeline','%Pipeline']]
-
+data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',
+             'Confirmed_TEU','Pipeline','%Pipeline']]
+data["chk"] = ""
+for row in range(len(data)):
+    if data.loc[row,'Year'] == 'Year':
+        data.loc[row,"chk"] = "out"
+    else:
+        data.loc[row,"chk"] = "in"
 
 #################################################################################################################################################
 
-data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',"Confirmed_TEU",'Pipeline','%Pipeline']]
-data["Year"] = data["Year"].fillna(0)
-data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].fillna(0)
-data['Pipeline'] = data['Pipeline'].fillna(0)
-data['%Pipeline'] = data['%Pipeline'].fillna(0)
-data['%Pipeline'] = data['%Pipeline'] * 100
+data = data[data["chk"] == "in"]
+
+data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',
+             "Confirmed_TEU",'Pipeline','%Pipeline']]
+
+data = data.fillna('0')
+data['Year'] = data['Year'].astype(float)
+data['Year'] = data['Year'].astype(int)
+
 data = data[data["Year"]!=0]
-data["Year"] = data["Year"].astype(int)
-data["Week"] = data["Week"].astype(int)
-data["Month"] = data["Month"].astype(int)
+
+data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].fillna('0')
+data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].astype(float)
 data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].astype(int)
+
+data['Pipeline'] = data['Pipeline'].fillna('0')
+data['Pipeline'] = data['Pipeline'].astype(float)
 data['Pipeline'] = data['Pipeline'].astype(int)
-data['Confirmed_TEU'] = data['Confirmed_TEU'].fillna(0)
+
+data['%Pipeline'] = data['%Pipeline'].fillna('0')
+data['%Pipeline'] = data['%Pipeline'].astype(float)
+data['%Pipeline'] = data['%Pipeline'].astype(int)
+
+data['Confirmed_TEU'] = data['Confirmed_TEU'].fillna('0')
+data['Confirmed_TEU'] = data['Confirmed_TEU'].astype(float)
 data['Confirmed_TEU'] = data['Confirmed_TEU'].astype(int)
+
+data["Week"] = data["Week"].fillna('0')
+data["Week"] = data["Week"].astype(float)
+data["Week"] = data["Week"].astype(int)
+
+data["Month"] = data["Month"].fillna('0')                                                     
+data["Month"] = data["Month"].astype(float)
+data["Month"] = data["Month"].astype(int)
 
 data = data.fillna(0)
 
@@ -47,6 +72,8 @@ data = data[data["POL"]!=None]
 data = data[data["POL"]!="XXX"]
 data = data[data["POL"]!=0]
 data = data[data["Year"]!=0]
+data = data[data["Month"]>5]
+
 
 data_allocation = data.copy()
 data_allocation["Type"] = "Allocation"
@@ -303,25 +330,10 @@ else:
 			)
 
 
-			per_of_totalIII = px.bar(
-				finalselection,
-				x = "%Filled",
-				y = "%Type", 
-				orientation="h",
-				title="<b>%Allocation Vs. %Actual",
-				color='%Type',
-				text=[f'{i}%' for i in finalselection['%Filled']]
-			) 
 
-			per_of_totalIII.layout.xaxis.ticksuffix=".0%" 
-
-
-			left_column, right_column = st.columns(2)
+			left_column = st.columns(1)
 			with left_column:
 				st.plotly_chart(Allocation_TEU)
-
-			with right_column:
-				st.plotly_chart(per_of_totalIII)
 				
 
 			total_all_teu = int(just_a_shot['Allocation'].sum())
@@ -799,8 +811,5 @@ else:
 	st.markdown("---")
 	
 	st.write(finalselectionSly)
-	
-	
-
 
 
