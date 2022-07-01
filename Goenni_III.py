@@ -210,7 +210,7 @@ else:
 				x='Type:O',
 				y='TEU:Q',
 				color='Type:N',
-				column='Forwarder:N',
+				alt.Column('Forwarder:N', header=alt.Header(titleFontSize=20)),
 				tooltip='TEU:Q',
 				text='TEU:Q'
 			).configure_axis(
