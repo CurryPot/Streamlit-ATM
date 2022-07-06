@@ -73,7 +73,7 @@ data = data[data["POL"]!=None]
 data = data[data["POL"]!="XXX"]
 data = data[data["POL"]!=0]
 data = data[data["Year"]!=0]
-data = data[data["Month"]>5]
+#data = data[data["Month"]>5]
 
 
 data_allocation = data.copy()
