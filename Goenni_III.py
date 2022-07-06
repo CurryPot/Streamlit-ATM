@@ -16,9 +16,10 @@ today = dt.date.today()
 CurrentWeek = int(today.isocalendar().week)
 
 DATA_URL = (r"ATMweb.txt")
-#DATA_URL = r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt"
-#data = pd.read_excel(DATA_URL, parse_dates=True, sheet_name = 'AllocationPlan', engine='openpyxl')
-data = pd.read_csv(DATA_URL, sep=",", lineterminator='\n', header=None)
+data = pd.read_csv(DATA_URL, sep=",",header=None, index_col=False)
+
+data = data.rename(columns={1:'Year',2:'Month',3:'Week',4:'POL',5:'Forwarder',6:'Allocation/Week in TEU',
+             7:'Confirmed_TEU',8:'ConfirmedBalance',9:'%ConfirmedTEU', 10:'Pipeline', 11:'PipelineBalance',12:'%Pipeline'})
 
 data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',
              'Confirmed_TEU','Pipeline','%Pipeline']]
