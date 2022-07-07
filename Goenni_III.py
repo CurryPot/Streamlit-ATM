@@ -18,11 +18,12 @@ CurrentWeek = int(today.isocalendar().week)
 DATA_URL = (r"ATMweb.txt")
 data = pd.read_csv(DATA_URL, sep=",",header=None, index_col=False)
 
-data = data.rename(columns={1:'Year',2:'Month',3:'Week',4:'POL',5:'Forwarder',6:'Allocation/Week in TEU',
-             7:'Confirmed_TEU',8:'ConfirmedBalance',9:'%ConfirmedTEU', 10:'Pipeline', 11:'PipelineBalance',12:'%Pipeline'})
+data = data.rename(columns={1:'Year',2:'Month',3:'Week',4:'POL',5:'Forwarder',6:'FC_Allocation/Week in TEU',
+             7:'Confirmed_TEU',8:'ConfirmedBalance',9:'%ConfirmedTEU', 10:'Pipeline', 11:'PipelineBalance',12:'%Pipeline', 13:'Allocation/Week in TEU'})
 
-data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',
-             'Confirmed_TEU','Pipeline','%Pipeline']]
+data = data[['Year','Month','Week','POL','Forwarder','FC_Allocation/Week in TEU',
+             'Confirmed_TEU','Pipeline','%Pipeline', 'Allocation/Week in TEU']]
+
 data["chk"] = ""
 for row in range(len(data)):
     if data.loc[row,'Year'] == 'Year':
