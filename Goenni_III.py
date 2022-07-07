@@ -15,7 +15,7 @@ today = dt.date.today()
 
 CurrentWeek = int(today.isocalendar().week)
 
-DATA_URL = (r"ATMweb.xlsx")
+DATA_URL = (r"ATMweb.txt")
 #DATA_URL = r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt"
 
 data = pd.read_csv(DATA_URL, sep=",",header=None, index_col=False)
