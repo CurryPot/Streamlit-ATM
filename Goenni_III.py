@@ -1,6 +1,5 @@
-import pandas as pd
-import os 
 import glob
+import os 
 import streamlit as st
 import numpy as np
 import plotly.express as px
@@ -9,13 +8,16 @@ import plotly.figure_factory as ff
 import altair as alt
 from vega_datasets import data
 import datetime as dt
+import pandas as pd
 import openpyxl
 
 today = dt.date.today()
 
 CurrentWeek = int(today.isocalendar().week)
 
-DATA_URL = (r"ATMweb.txt")
+#DATA_URL = (r"ATMweb.xlsx")
+DATA_URL = r"\\WNSAN01\Department\Logistic\22 - Seefracht\AMT\Input Data\web\ATMweb.txt"
+
 data = pd.read_csv(DATA_URL, sep=",",header=None, index_col=False)
 
 data = data.rename(columns={1:'Year',2:'Month',3:'Week',4:'POL',5:'Forwarder',6:'FC_Allocation/Week in TEU',
@@ -35,14 +37,18 @@ for row in range(len(data)):
 
 data = data[data["chk"] == "in"]
 
-data = data[['Year','Month','Week','POL','Forwarder','Allocation/Week in TEU',
-             "Confirmed_TEU",'Pipeline','%Pipeline']]
+data = data[['Year','Month','Week','POL','Forwarder','FC_Allocation/Week in TEU',
+             'Confirmed_TEU','Pipeline','%Pipeline', 'Allocation/Week in TEU']]
 
 data = data.fillna('0')
 data['Year'] = data['Year'].astype(float)
 data['Year'] = data['Year'].astype(int)
 
 data = data[data["Year"]!=0]
+
+data['FC_Allocation/Week in TEU'] = data['FC_Allocation/Week in TEU'].fillna('0')
+data['FC_Allocation/Week in TEU'] = data['FC_Allocation/Week in TEU'].astype(float)
+data['FC_Allocation/Week in TEU'] = data['FC_Allocation/Week in TEU'].astype(int)
 
 data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].fillna('0')
 data['Allocation/Week in TEU'] = data['Allocation/Week in TEU'].astype(float)
@@ -74,13 +80,17 @@ data = data[data["POL"]!=None]
 data = data[data["POL"]!="XXX"]
 data = data[data["POL"]!=0]
 data = data[data["Year"]!=0]
-data = data[data["Month"]>3]
+data = data[data["Month"]>5]
 
+data_allo = data.copy()
+data_allo["Type"] = "Allo"
+data_allo = data_allo[["Year", "Month", "Week", "POL", "Forwarder", "Type", "Allocation/Week in TEU"]]
+data_allo = data_allo.rename(columns={"Allocation/Week in TEU":"TEU"})
 
 data_allocation = data.copy()
 data_allocation["Type"] = "Allocation"
-data_allocation = data_allocation[["Year", "Month", "Week", "POL", "Forwarder", "Type","Allocation/Week in TEU"]]
-data_allocation = data_allocation.rename(columns={"Allocation/Week in TEU":"TEU"})
+data_allocation = data_allocation[["Year", "Month", "Week", "POL", "Forwarder", "Type", "FC_Allocation/Week in TEU"]]
+data_allocation = data_allocation.rename(columns={"FC_Allocation/Week in TEU":"TEU"})
 
 data_Pipeline = data.copy()
 data_Pipeline["Type"] = "Pipeline"
@@ -92,7 +102,7 @@ data_confirmed["Type"] = "Confirmed"
 data_confirmed = data_confirmed[["Year", "Month", "Week", "POL", "Forwarder", "Type","Confirmed_TEU"]]
 data_confirmed = data_confirmed.rename(columns={"Confirmed_TEU":"TEU"})
 
-df_combined = pd.concat([data_allocation,data_Pipeline, data_confirmed])
+df_combined = pd.concat([data_allo, data_allocation,data_Pipeline, data_confirmed])
 df_combined = df_combined[df_combined["Forwarder"] != 0]
 
 v = df_combined.copy()
@@ -101,11 +111,24 @@ v.reset_index(drop=True,inplace=True)
 v = v.rename(columns={"TEU":"Allocation"})
 v = v[["Year", "Month", "Week", "POL", "Forwarder","Type", "Allocation"]]
 
-df_combined_final = pd.merge(df_combined, v,
+b = df_combined.copy()
+b = b[b["Type"]=="Allo"]
+b.reset_index(drop=True,inplace=True)
+b = b.rename(columns={"TEU":"Allo"})
+b = b[["Year", "Month", "Week", "POL", "Forwarder","Type", "Allo"]]
+
+df_combined_II = pd.merge(df_combined, b,
                              on=["Year", "Month", "Week", "POL", "Forwarder", "Type"], how="left")
+
+
+df_combined_final = pd.merge(df_combined_II, v,
+                             on=["Year", "Month", "Week", "POL", "Forwarder", "Type"], how="left")
+
 df_combined_final["Allocation"] = df_combined_final["Allocation"].fillna(0)
 df_combined_final["Allocation"] = df_combined_final["Allocation"].astype(int)
 
+df_combined_final["Allo"] = df_combined_final["Allo"].fillna(0)
+df_combined_final["Allo"] = df_combined_final["Allo"].astype(int)
 
 source = df_combined_final.copy()
 sourceII = df_combined_final.copy()
@@ -212,15 +235,28 @@ else:
 				x='Type:O',
 				y='TEU:Q',
 				color='Type:N',
-				column=alt.Column('Forwarder:N', header=alt.Header(labelFontSize=20)),
+				column='Forwarder:N',
 				tooltip='TEU:Q',
 				text='TEU:Q'
-			).configure_axis(
-			labelFontSize=20,
-			titleFontSize=20
 			)
+		
 			
-			st.altair_chart(bar_x)
+			bar_y = alt.Chart(finalselection, height=500, width={"step": 120}).mark_bar().encode(
+				x='Type:O',
+				y= alt.Y(('%Filled:Q'), axis=alt.Axis(format='%')),
+				color='%Type:N',
+				column='Forwarder:N',
+				tooltip='TEU:Q',
+				text='%Filled:Q'
+			)
+
+			left_column, right_column = st.columns(2)
+			with left_column:
+				st.altair_chart(bar_x)
+
+			with right_column:
+				st.altair_chart(bar_y)
+				
 				
 			finalselection = finalselection.sort_values(by=['Forwarder','Type'],ascending=True)
 			
@@ -317,9 +353,28 @@ else:
 				color='Type',
 				text="TEU"
 			)
-			
-			st.plotly_chart(Allocation_TEU)
 
+
+			per_of_totalIII = px.bar(
+				finalselection,
+				x = "%Filled",
+				y = "%Type", 
+				orientation="h",
+				title="<b>%Allocation Vs. %Actual",
+				color='%Type',
+				text=[f'{i}%' for i in finalselection['%Filled']]
+			) 
+
+			per_of_totalIII.layout.xaxis.ticksuffix=".0%" 
+
+
+			left_column, right_column = st.columns(2)
+			with left_column:
+				st.plotly_chart(Allocation_TEU)
+
+			with right_column:
+				st.plotly_chart(per_of_totalIII)
+				
 
 			total_all_teu = int(just_a_shot['Allocation'].sum())
 			used_teu = int(just_a_shot['Pipeline'].sum())
@@ -391,7 +446,7 @@ per_of_totalSlyII = per_of_totalSlyII.fillna(0)
 just_a_shot = per_of_totalSlyII.copy()
 per_of_totalSlyV1 = per_of_totalSlyII.copy()
 
-finalselectionSly = just_a_shot[["Year", "Month", "Week", "POL", "Forwarder", "Allocation", "Confirmed", "Pipeline"]]
+finalselectionSly = just_a_shot[["Year", "Month", "Week", "POL", "Forwarder", "Allocation", "Confirmed", "Pipeline", "Allo"]]
 
 st.sidebar.subheader("Chart Filter")
 
@@ -546,6 +601,15 @@ elif polsly == DEFAULT and fwdsly != DEFAULT:
 	)
 
 	bar = bar + line2
+ 	
+	line3 = alt.Chart(finalselectionSly).mark_line(color="blue").encode(
+		x='Week:O',
+		y=alt.Y('min(Allo)', title='TEU'),
+		size=alt.value(6)
+	)
+
+	bar = bar + line3   
+
 
 	
 	text = alt.Chart(finalselectionSly).mark_text(color='black',dy=-5,dx=0).encode(
