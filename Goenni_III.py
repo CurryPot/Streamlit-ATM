@@ -480,7 +480,7 @@ if polsly == DEFAULT and fwdsly == DEFAULT:
         alt.value('cadetblue'),     
         alt.value('lightgrey')),
 	).properties(width=1600, height=600, title=alt.TitleParams(
-        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = Allocation'],
+        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = FC_Allocation'],
         baseline='bottom',
         orient='bottom',
         anchor='end',
@@ -577,7 +577,7 @@ elif polsly == DEFAULT and fwdsly != DEFAULT:
         alt.value('lightgrey') 
      )
 	).properties(width=1600, height=600, title=alt.TitleParams(
-        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = Allocation'],
+        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BLUE = ALLO', 'BARS = FC_Allocation'],
         baseline='bottom',
         orient='bottom',
         anchor='end',
@@ -685,7 +685,7 @@ elif polsly != DEFAULT and fwdsly == DEFAULT:
         alt.value('lightgrey') 
      )
 	).properties(width=1600, height=600, title=alt.TitleParams(
-        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = Allocation'],
+        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = FC_Allocation'],
         baseline='bottom',
         orient='bottom',
         anchor='end',
@@ -783,7 +783,7 @@ else:
         alt.value('lightgrey') 
      )
 	).properties(width=1600, height=600, title=alt.TitleParams(
-        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = Allocation'],
+        ['YELLOW = Confirmed', 'RED = PIPELINE', 'BARS = FC_Allocation'],
         baseline='bottom',
         orient='bottom',
         anchor='end',
